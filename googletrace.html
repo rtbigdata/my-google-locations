@@ -1,0 +1,38 @@
+<html>
+<head><title>Google Location History</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+<link rel="stylesheet" href="MarkerCluster.css" />
+<link rel="stylesheet" href="MarkerCluster.Default.css" />
+</head>
+<body>
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="leaflet.markercluster.js"></script>
+<div id="map" style="width: 800px; height: 600px"></div>
+<script>
+var map = L.map('map', 
+{
+center: [33.79878, -118.07587],
+zoom: 9
+});
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+
+// load GeoJSON from an external file
+$.getJSON("google_points.geojson",function(data){
+
+  var markers = L.markerClusterGroup({chunkedLoading: true});
+
+  var geoJsonLayer = L.geoJson(data, {
+    onEachFeature: function (feature, layer) {
+      layer.bindPopup(feature.properties.timestamp);
+    }
+  });
+  markers.addLayer(geoJsonLayer);
+  map.addLayer(markers);
+  map.fitBounds(markers.getBounds());
+
+});
+
+</script>
+</body>
+</html>
